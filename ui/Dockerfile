@@ -34,9 +34,9 @@ RUN --mount=type=cache,target=/cache/bun,rw \
 WORKDIR /app/ui
 
 # Copy package files and install dependencies
-COPY package*.json ./
+COPY package.json bun.lock* package-lock.json* ./
 RUN --mount=type=cache,target=/cache/node_modules,rw \
-    bun install --frozen-lockfile \
+    bun install \
     && bun pm ls --all \
     && bun pm hash
 
@@ -50,7 +50,7 @@ COPY . .
 RUN --mount=type=cache,target=/cache/node_modules,rw \
     --mount=type=cache,target=/app/ui/.next/cache,rw \
     export NEXT_TELEMETRY_DEBUG=1 \
-    && bun install --frozen-lockfile \
+    && bun install \
     && bun run build --no-lint \
     && mkdir -p /app/ui/public
 
