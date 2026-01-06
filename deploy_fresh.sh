@@ -11,14 +11,28 @@ set -e
 # =================================================================================================
 
 # Configuration
+# -------------------------------------------------------------------------------------------------
+# PUBLIC REGISTRY SETUP (ttl.sh)
+# -------------------------------------------------------------------------------------------------
+# We default to ttl.sh, an ephemeral public registry that requires no login.
+# This solves the "pull access denied" and "image not found" errors by making images publicly available.
+# To use your own registry (e.g. Docker Hub), run: export REGISTRY=docker.io/yourusername
+RAND_ID=$(openssl rand -hex 4 2>/dev/null || echo "dev")
+: "${REGISTRY:=ttl.sh/maduro-${RAND_ID}}"
+
 VERSION="0.0.1"
+# If using ttl.sh, we append -24h to the tag to set the retention period (default behavior of ttl.sh)
+if [[ "$REGISTRY" == *"ttl.sh"* ]]; then
+    VERSION="${VERSION}-24h"
+fi
+
 KMCP_VERSION="v0.0.1"
-# REGISTRY="localhost:5001" # DISABLED: We are building locally without a registry
-REPO="maduro-dev/maduro"
+REPO="maduro" # Simplified repo path
 NAMESPACE="maduro"
 
 echo "=================================================="
 echo "   MADURO FRESH DEPLOYMENT - VERSION $VERSION"
+echo "   Registry: $REGISTRY"
 echo "=================================================="
 
 # -------------------------------------------------------------------------------------------------
@@ -184,8 +198,8 @@ build_image() {
     local dockerfile=$2
     local context=$3
     local extra_args=$4
-    # IMPORTANT: Tagging WITHOUT registry prefix so Kubernetes finds it locally
-    local tag="$REPO/$name:$VERSION"
+    # IMPORTANT: Tagging with registry to allow push
+    local tag="$REGISTRY/$REPO/$name:$VERSION"
     
     echo "  -> Building $name ($tag)..."
     
@@ -220,8 +234,7 @@ echo "  -> Building kagent-adk..."
 build_image "kagent-adk" "python/Dockerfile" "python"
 
 # Tag ADK for local reference in next build
-# Note: We tag it with the local name we just built
-docker tag "$REPO/kagent-adk:$VERSION" "maduro-local/kagent-adk:$VERSION"
+docker tag "$REGISTRY/$REPO/kagent-adk:$VERSION" "maduro-local/kagent-adk:$VERSION"
 
 # Build App
 echo "  -> Building app..."
@@ -233,27 +246,22 @@ echo "  -> All images built successfully."
 
 
 # -------------------------------------------------------------------------------------------------
-# 3. LOAD IMAGES (Kind/Local)
+# 3. PUSH IMAGES (Required for remote/ttl.sh)
 # -------------------------------------------------------------------------------------------------
-echo -e "\n[3/4] Loading Images into Cluster..."
+echo -e "\n[3/4] Pushing Images to Registry..."
 
-# DISABLED: Pushing to localhost:5001 is failing and not needed if we rely on local images
-# echo "  -> Pushing images to local registry $REGISTRY..."
-# docker push "$REGISTRY/$REPO/controller:$VERSION" || true
-# docker push "$REGISTRY/$REPO/ui:$VERSION" || true
-# docker push "$REGISTRY/$REPO/app:$VERSION" || true
+echo "  -> Pushing images to $REGISTRY..."
+docker push "$REGISTRY/$REPO/controller:$VERSION"
+docker push "$REGISTRY/$REPO/ui:$VERSION"
+docker push "$REGISTRY/$REPO/app:$VERSION"
 
 if command -v kind >/dev/null 2>&1; then
-    echo "  -> Kind detected. Loading images..."
-    # Load the images we just built (without registry prefix)
-    kind load docker-image "$REPO/controller:$VERSION" --name maduro || true
-    kind load docker-image "$REPO/ui:$VERSION" --name maduro || true
-    kind load docker-image "$REPO/kagent-adk:$VERSION" --name maduro || true
-    kind load docker-image "$REPO/app:$VERSION" --name maduro || true
-else
-    echo "  -> Kind not detected. Skipping direct load."
-    echo "     WARNING: If you are using Minikube or a remote cluster, you must manually load or push images."
-    echo "     For Minikube: eval \$(minikube docker-env) before running this script."
+    echo "  -> Kind detected. Loading images just in case (optimization)..."
+    # Load the images we just built
+    kind load docker-image "$REGISTRY/$REPO/controller:$VERSION" --name maduro || true
+    kind load docker-image "$REGISTRY/$REPO/ui:$VERSION" --name maduro || true
+    kind load docker-image "$REGISTRY/$REPO/kagent-adk:$VERSION" --name maduro || true
+    kind load docker-image "$REGISTRY/$REPO/app:$VERSION" --name maduro || true
 fi
 
 
@@ -293,20 +301,20 @@ helm upgrade --install maduro helm/maduro \
     --set imagePullPolicy=IfNotPresent \
     --set kmcp.enabled=true \
     --set controller.image.registry="" \
-    --set controller.image.repository="maduro-dev/maduro/controller" \
+    --set controller.image.repository="$REGISTRY/$REPO/controller" \
     --set controller.image.tag="$VERSION" \
     --set controller.image.pullPolicy="IfNotPresent" \
     --set ui.image.registry="" \
-    --set ui.image.repository="maduro-dev/maduro/ui" \
+    --set ui.image.repository="$REGISTRY/$REPO/ui" \
     --set ui.image.tag="$VERSION" \
     --set ui.image.pullPolicy="IfNotPresent" \
     --set controller.agentImage.registry="" \
-    --set controller.agentImage.repository="maduro-dev/maduro/app" \
+    --set controller.agentImage.repository="$REGISTRY/$REPO/app" \
     --set controller.agentImage.tag="$VERSION" \
     --set controller.agentImage.pullPolicy="IfNotPresent" \
     --set global.tag="$VERSION" \
-    --set registry="docker.io" \
-    --set global.registry="docker.io" \
+    --set registry="" \
+    --set global.registry="" \
     $HELM_ARGS
 
 echo "=================================================="
