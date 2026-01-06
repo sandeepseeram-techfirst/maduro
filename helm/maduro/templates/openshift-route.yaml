@@ -4,12 +4,12 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-    name: {{ include "kagent.fullname" . }}-ui
-    namespace: {{ include "kagent.namespace" . }}
+    name: {{ include "maduro.fullname" . }}-ui
+    namespace: {{ include "maduro.namespace" . }}
 spec:
     to:
         kind: Service
-        name: {{ include "kagent.fullname" . }}-ui
+        name: {{ include "maduro.fullname" . }}-ui
     port:
         targetPort: {{ .Values.ui.service.ports.port }}
     tls:

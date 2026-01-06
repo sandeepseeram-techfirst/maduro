@@ -119,7 +119,7 @@ export function AgentSetupStep({ initialData, onNext, onBack }: AgentSetupStepPr
                                     />
                                 </FormControl>
                                 <FormDescription>
-                                    These instructions guide the agent. We&apos;re starting with basic defaults, but you can modify them. Read more <a href="https://kagent.dev/docs/getting-started/system-prompts" target="_blank" rel="noopener noreferrer" className="text-primary underline">here</a>.
+                                    These instructions guide the agent. We&apos;re starting with basic defaults, but you can modify them.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

@@ -29,7 +29,7 @@ interface OnboardingStateData {
 
 export const K8S_AGENT_DEFAULTS = {
     name: "my-first-k8s-agent",
-    namespace: "kagent",
+    namespace: "maduro",
     description: "This agent can interact with the Kubernetes API to get information about the cluster.",
     instructions: `You're a friendly and helpful agent that uses Kubernetes tools to answer users questions about the cluster.
 
@@ -38,7 +38,7 @@ export const K8S_AGENT_DEFAULTS = {
 - Always be helpful and friendly
 - If you don't know how to answer the question DO NOT make things up
   respond with "Sorry, I don't know how to answer that" and ask the user to further clarify the question
-  If you are unable to help, or something goes wrong, refer the user to https://kagent.dev for more information or support.
+  If you are unable to help, or something goes wrong, refer the user to the project documentation for more information or support.
 
 # Response format
 - ALWAYS format your response as Markdown
@@ -137,13 +137,13 @@ export function OnboardingWizard({ onOnboardingComplete, onSkip }: OnboardingWiz
   };
 
   const shareOnTwitter = (text: string) => {
-    const kagentUrl = "https://kagent.dev";
+    const kagentUrl = "https://maduro.dev";
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(kagentUrl)}`;
     window.open(twitterUrl, '_blank', 'noopener,noreferrer');
   };
 
   const shareOnLinkedIn = () => {
-     const kagentUrl = "https://kagent.dev";
+     const kagentUrl = "https://maduro.dev";
      const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(kagentUrl)}`;
      window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
   };

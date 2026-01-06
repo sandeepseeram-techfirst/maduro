@@ -1,29 +1,29 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "kagent.fullname" . }}-getter-rolebinding
+  name: {{ include "maduro.fullname" . }}-getter-rolebinding
   labels:
-    {{- include "kagent.labels" . | nindent 4 }}
+    {{- include "maduro.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "kagent.fullname" . }}-getter-role
+  name: {{ include "maduro.fullname" . }}-getter-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kagent.fullname" . }}-controller
+  name: {{ include "maduro.fullname" . }}-controller
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "kagent.fullname" . }}-writer-rolebinding
+  name: {{ include "maduro.fullname" . }}-writer-rolebinding
   labels:
-    {{- include "kagent.labels" . | nindent 4 }}
+    {{- include "maduro.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "kagent.fullname" . }}-writer-role
+  name: {{ include "maduro.fullname" . }}-writer-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kagent.fullname" . }}-controller
+  name: {{ include "maduro.fullname" . }}-controller
   namespace: {{ .Release.Namespace }}

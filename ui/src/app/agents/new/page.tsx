@@ -40,13 +40,13 @@ interface AgentPageContentProps {
   agentNamespace: string | null;
 }
 
-const DEFAULT_SYSTEM_PROMPT = `You're a helpful agent, made by the kagent team.
+const DEFAULT_SYSTEM_PROMPT = `You're a helpful agent, made by the Maduro team.
 
 # Instructions
     - If user question is unclear, ask for clarification before running any tools
     - Always be helpful and friendly
     - If you don't know how to answer the question DO NOT make things up, tell the user "Sorry, I don't know how to answer that" and ask them to clarify the question further
-    - If you are unable to help, or something goes wrong, refer the user to https://kagent.dev for more information or support.
+    - If you are unable to help, or something goes wrong, refer the user to the project documentation for more information or support.
 
 # Response format:
     - ALWAYS format your response as Markdown
@@ -692,7 +692,7 @@ function AgentPageContent({ isEditMode, agentName, agentNamespace }: AgentPageCo
               </>
             )}
             <div className="flex justify-end">
-              <Button className="bg-violet-500 hover:bg-violet-600" onClick={handleSaveAgent} disabled={state.isSubmitting || state.isLoading}>
+              <Button className="bg-primary hover:bg-primary/90" onClick={handleSaveAgent} disabled={state.isSubmitting || state.isLoading}>
                 {state.isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />

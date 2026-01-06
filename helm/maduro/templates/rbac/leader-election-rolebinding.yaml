@@ -1,0 +1,17 @@
+{{- if eq (include "maduro.leaderElectionEnabled" .) "true" }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "maduro.fullname" . }}-leader-election-rolebinding
+  namespace: {{ include "maduro.namespace" . }}
+  labels:
+    {{- include "maduro.controller.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "maduro.fullname" . }}-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "maduro.fullname" . }}-controller
+  namespace: {{ include "maduro.namespace" . }}
+{{- end }}

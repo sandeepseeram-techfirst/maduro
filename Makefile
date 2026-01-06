@@ -1,8 +1,8 @@
 # Image configuration
 DOCKER_REGISTRY ?= localhost:5001
 BASE_IMAGE_REGISTRY ?= cgr.dev
-DOCKER_REPO ?= kagent-dev/kagent
-HELM_REPO ?= oci://ghcr.io/kagent-dev
+DOCKER_REPO ?= maduro-dev/maduro
+HELM_REPO ?= oci://ghcr.io/maduro-dev
 HELM_DIST_FOLDER ?= dist
 
 BUILD_DATE := $(shell date -u '+%Y-%m-%d')
@@ -28,7 +28,7 @@ BUILDX_BUILDER_NAME ?= kagent-builder-$(BUILDKIT_VERSION)
 DOCKER_BUILDER ?= docker buildx
 DOCKER_BUILD_ARGS ?= --push --platform linux/$(LOCALARCH)
 
-KIND_CLUSTER_NAME ?= kagent
+KIND_CLUSTER_NAME ?= maduro
 KIND_IMAGE_VERSION ?= 1.34.0
 
 CONTROLLER_IMAGE_NAME ?= controller
@@ -273,13 +273,13 @@ helm-cleanup:
 .PHONY: helm-test
 helm-test: helm-version
 	mkdir -p tmp
-	echo $$(helm template kagent ./helm/kagent/ --namespace kagent --set providers.default=ollama																	| tee tmp/ollama.yaml 		| grep ^kind: | wc -l)
-	echo $$(helm template kagent ./helm/kagent/ --namespace kagent --set providers.default=openAI       --set providers.openAI.apiKey=your-openai-api-key 			| tee tmp/openAI.yaml 		| grep ^kind: | wc -l)
-	echo $$(helm template kagent ./helm/kagent/ --namespace kagent --set providers.default=anthropic    --set providers.anthropic.apiKey=your-anthropic-api-key 	| tee tmp/anthropic.yaml 	| grep ^kind: | wc -l)
-	echo $$(helm template kagent ./helm/kagent/ --namespace kagent --set providers.default=azureOpenAI  --set providers.azureOpenAI.apiKey=your-openai-api-key		| tee tmp/azureOpenAI.yaml	| grep ^kind: | wc -l)
-	echo $$(helm template kagent ./helm/kagent/ --namespace kagent --set providers.default=gemini       --set providers.gemini.apiKey=your-gemini-api-key 			| tee tmp/gemini.yaml 		| grep ^kind: | wc -l)
+	echo $$(helm template maduro ./helm/maduro/ --namespace maduro --set providers.default=ollama																	| tee tmp/ollama.yaml 		| grep ^kind: | wc -l)
+	echo $$(helm template maduro ./helm/maduro/ --namespace maduro --set providers.default=openAI       --set providers.openAI.apiKey=your-openai-api-key 			| tee tmp/openAI.yaml 		| grep ^kind: | wc -l)
+	echo $$(helm template maduro ./helm/maduro/ --namespace maduro --set providers.default=anthropic    --set providers.anthropic.apiKey=your-anthropic-api-key 	| tee tmp/anthropic.yaml 	| grep ^kind: | wc -l)
+	echo $$(helm template maduro ./helm/maduro/ --namespace maduro --set providers.default=azureOpenAI  --set providers.azureOpenAI.apiKey=your-openai-api-key		| tee tmp/azureOpenAI.yaml	| grep ^kind: | wc -l)
+	echo $$(helm template maduro ./helm/maduro/ --namespace maduro --set providers.default=gemini       --set providers.gemini.apiKey=your-gemini-api-key 			| tee tmp/gemini.yaml 		| grep ^kind: | wc -l)
 	helm plugin ls | grep unittest || helm plugin install https://github.com/helm-unittest/helm-unittest.git
-	helm unittest helm/kagent
+	helm unittest helm/maduro
 
 .PHONY: helm-agents
 helm-agents:
@@ -313,25 +313,25 @@ helm-tools:
 
 .PHONY: helm-version
 helm-version: helm-cleanup helm-agents helm-tools
-	VERSION=$(VERSION) KMCP_VERSION=$(KMCP_VERSION) envsubst < helm/kagent-crds/Chart-template.yaml > helm/kagent-crds/Chart.yaml
-	VERSION=$(VERSION) KMCP_VERSION=$(KMCP_VERSION) envsubst < helm/kagent/Chart-template.yaml > helm/kagent/Chart.yaml
-	helm dependency update helm/kagent
-	helm dependency update helm/kagent-crds
-	helm package -d $(HELM_DIST_FOLDER) helm/kagent-crds
-	helm package -d $(HELM_DIST_FOLDER) helm/kagent
+	VERSION=$(VERSION) KMCP_VERSION=$(KMCP_VERSION) envsubst < helm/maduro-crds/Chart-template.yaml > helm/maduro-crds/Chart.yaml
+	VERSION=$(VERSION) KMCP_VERSION=$(KMCP_VERSION) envsubst < helm/maduro/Chart-template.yaml > helm/maduro/Chart.yaml
+	helm dependency update helm/maduro
+	helm dependency update helm/maduro-crds
+	helm package -d $(HELM_DIST_FOLDER) helm/maduro-crds
+	helm package -d $(HELM_DIST_FOLDER) helm/maduro
 
 .PHONY: helm-install-provider
 helm-install-provider: helm-version check-api-key
-	helm $(HELM_ACTION) kagent-crds helm/kagent-crds \
-		--namespace kagent \
+	helm $(HELM_ACTION) maduro-crds helm/maduro-crds \
+		--namespace maduro \
 		--create-namespace \
 		--history-max 2    \
 		--timeout 5m 			\
 		--kube-context kind-$(KIND_CLUSTER_NAME) \
 		--wait \
 		--set kmcp.enabled=$(KMCP_ENABLED)
-	helm $(HELM_ACTION) kagent helm/kagent \
-		--namespace kagent \
+	helm $(HELM_ACTION) maduro helm/maduro \
+		--namespace maduro \
 		--create-namespace \
 		--history-max 2    \
 		--timeout 5m       \
@@ -367,8 +367,8 @@ helm-test-install: helm-install-provider
 
 .PHONY: helm-uninstall
 helm-uninstall:
-	helm uninstall kagent --namespace kagent --kube-context kind-$(KIND_CLUSTER_NAME) --wait
-	helm uninstall kagent-crds --namespace kagent --kube-context kind-$(KIND_CLUSTER_NAME) --wait
+	helm uninstall maduro --namespace maduro --kube-context kind-$(KIND_CLUSTER_NAME) --wait
+	helm uninstall maduro-crds --namespace maduro --kube-context kind-$(KIND_CLUSTER_NAME) --wait
 
 .PHONY: helm-publish
 helm-publish: helm-version
@@ -391,12 +391,12 @@ kagent-cli-install: use-kind-cluster build-cli-local helm-version helm-install-p
 .PHONY: kagent-cli-port-forward
 kagent-cli-port-forward: use-kind-cluster
 	@echo "Port forwarding to kagent CLI..."
-	kubectl port-forward -n kagent service/kagent-controller 8083:8083
+	kubectl port-forward -n maduro service/maduro-controller 8083:8083
 
 .PHONY: kagent-ui-port-forward
 kagent-ui-port-forward: use-kind-cluster
 	open http://localhost:8082/
-	kubectl port-forward -n kagent service/kagent-ui 8082:8080
+	kubectl port-forward -n maduro service/maduro-ui 8082:8080
 
 .PHONY: kagent-addon-install
 kagent-addon-install: use-kind-cluster
@@ -407,9 +407,9 @@ kagent-addon-install: use-kind-cluster
 	kubectl apply --context kind-$(KIND_CLUSTER_NAME) -f contrib/addons/prometheus.yaml
 	kubectl apply --context kind-$(KIND_CLUSTER_NAME) -f contrib/addons/metrics-server.yaml
 	# wait for pods to be ready
-	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=Ready pod -l app.kubernetes.io/name=grafana    -n kagent --timeout=60s
-	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=Ready pod -l app.kubernetes.io/name=postgres   -n kagent --timeout=60s
-	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=Ready pod -l app.kubernetes.io/name=prometheus -n kagent --timeout=60s
+	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=Ready pod -l app.kubernetes.io/name=grafana    -n maduro --timeout=60s
+	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=Ready pod -l app.kubernetes.io/name=postgres   -n maduro --timeout=60s
+	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=Ready pod -l app.kubernetes.io/name=prometheus -n maduro --timeout=60s
 
 .PHONY: open-dev-container
 open-dev-container:

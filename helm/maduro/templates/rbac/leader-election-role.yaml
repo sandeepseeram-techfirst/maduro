@@ -1,11 +1,11 @@
-{{- if eq (include "kagent.leaderElectionEnabled" .) "true" }}
+{{- if eq (include "maduro.leaderElectionEnabled" .) "true" }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "kagent.fullname" . }}-leader-election-role
-  namespace: {{ include "kagent.namespace" . }}
+  name: {{ include "maduro.fullname" . }}-leader-election-role
+  namespace: {{ include "maduro.namespace" . }}
   labels:
-    {{- include "kagent.controller.labels" . | nindent 4 }}
+    {{- include "maduro.controller.labels" . | nindent 4 }}
 rules:
 - apiGroups:
   - coordination.k8s.io

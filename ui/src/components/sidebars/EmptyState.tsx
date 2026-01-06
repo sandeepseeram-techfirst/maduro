@@ -8,7 +8,7 @@ const EmptyState = () => (
       <MessageSquare className="h-8 w-8 text-primary-foreground " />
     </div>
     <h3 className="text-lg font-semibold mb-2">No chats yet</h3>
-    <p className="text-sm  max-w-[250px] mb-6">{"Start a new conversation to begin using kagent"}</p>
+    <p className="text-sm  max-w-[250px] mb-6">{"Start a new conversation to begin using Maduro"}</p>
     <ActionButtons hasSessions={false} />
   </div>
 );

@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "kagent.fullname" . }}-ui
-  namespace: {{ include "kagent.namespace" . }}
+  name: {{ include "maduro.fullname" . }}-ui
+  namespace: {{ include "maduro.namespace" . }}
   labels:
-    {{- include "kagent.ui.labels" . | nindent 4 }}
+    {{- include "maduro.ui.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.ui.service.type }}
   ports:
@@ -13,4 +13,4 @@ spec:
       protocol: TCP
       name: ui
   selector:
-    {{- include "kagent.ui.selectorLabels" . | nindent 4 }}
+    {{- include "maduro.ui.selectorLabels" . | nindent 4 }}

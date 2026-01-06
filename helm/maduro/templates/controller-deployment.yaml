@@ -1,16 +1,16 @@
-{{- include "kagent.validateController" . -}}
+{{- include "maduro.validateController" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kagent.fullname" . }}-controller
-  namespace: {{ include "kagent.namespace" . }}
+  name: {{ include "maduro.fullname" . }}-controller
+  namespace: {{ include "maduro.namespace" . }}
   labels:
-    {{- include "kagent.controller.labels" . | nindent 4 }}
+    {{- include "maduro.controller.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.controller.replicas }}
   selector:
     matchLabels:
-      {{- include "kagent.controller.selectorLabels" . | nindent 6 }}
+      {{- include "maduro.controller.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -19,7 +19,7 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "kagent.controller.selectorLabels" . | nindent 8 }}
+        {{- include "maduro.controller.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.controller.imagePullSecrets | default .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -27,7 +27,7 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml (.Values.controller.podSecurityContext | default .Values.podSecurityContext) | nindent 8 }}
-      serviceAccountName: {{ include "kagent.fullname" . }}-controller
+      serviceAccountName: {{ include "maduro.fullname" . }}-controller
       {{- if or (eq .Values.database.type "sqlite") (gt (len .Values.controller.volumes) 0) }}
       volumes:
       {{- if eq .Values.database.type "sqlite" }}
@@ -62,7 +62,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "kagent.fullname" . }}-controller
+                name: {{ include "maduro.fullname" . }}-controller
             {{- with .Values.controller.envFrom }}
               {{- toYaml . | nindent 12 }}
             {{- end }}

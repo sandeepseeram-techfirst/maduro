@@ -8,10 +8,10 @@
 apiVersion: kagent.dev/v1alpha2
 kind: ModelConfig
 metadata:
-  name: {{ include "kagent.defaultModelConfigName" $dot | quote }}
-  namespace: {{ include "kagent.namespace" . }}
+  name: {{ include "maduro.defaultModelConfigName" $dot | quote }}
+  namespace: {{ include "maduro.namespace" . }}
   labels:
-    {{- include "kagent.labels" $dot | nindent 4 }}
+    {{- include "maduro.labels" $dot | nindent 4 }}
 spec:
   {{- with $model }}
   provider: {{ .provider | quote }}

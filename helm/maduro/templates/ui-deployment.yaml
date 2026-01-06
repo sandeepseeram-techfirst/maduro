@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kagent.fullname" . }}-ui
-  namespace: {{ include "kagent.namespace" . }}
+  name: {{ include "maduro.fullname" . }}-ui
+  namespace: {{ include "maduro.namespace" . }}
   labels:
-    {{- include "kagent.labels" . | nindent 4 }}
+    {{- include "maduro.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.ui.replicas }}
   selector:
     matchLabels:
-      {{- include "kagent.ui.selectorLabels" . | nindent 6 }}
+      {{- include "maduro.ui.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -17,7 +17,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "kagent.ui.selectorLabels" . | nindent 8 }}
+        {{- include "maduro.ui.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -25,7 +25,7 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      serviceAccountName: {{ include "kagent.fullname" . }}-ui
+      serviceAccountName: {{ include "maduro.fullname" . }}-ui
       {{- with .Values.ui.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -42,7 +42,7 @@ spec:
           imagePullPolicy: {{ .Values.ui.image.pullPolicy | default .Values.imagePullPolicy }}
           env:
             - name: NEXT_PUBLIC_BACKEND_URL
-              value: "http://{{ include "kagent.fullname" . }}-controller.{{ include "kagent.namespace" . }}.svc.cluster.local:{{ .Values.controller.service.ports.port }}/api"
+              value: "http://{{ include "maduro.fullname" . }}-controller.{{ include "maduro.namespace" . }}.svc.cluster.local:{{ .Values.controller.service.ports.port }}/api"
             {{- with .Values.ui.env }}
               {{- toYaml . | nindent 12 }}
             {{- end }}

@@ -32,7 +32,7 @@ export default function AgentList() {
           <KagentLogo className="h-16 w-16 mx-auto mb-4" />
           <h3 className="text-lg font-medium  mb-2">No agents yet</h3>
           <p className=" mb-6">Create your first agent to get started</p>
-          <Button className="bg-violet-500 hover:bg-violet-600" asChild>
+          <Button className="bg-primary hover:bg-primary/90" asChild>
             <Link href={"/agents/new"}>
               <Plus className="h-4 w-4 mr-2" />
               Create New Agent

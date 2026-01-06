@@ -14,7 +14,7 @@ interface FinishStepProps {
 }
 
 export function FinishStep({ agentName, onFinish, shareOnTwitter, shareOnLinkedIn }: FinishStepProps) {
-    const shareTextTemplate = `🎉 I deployed my first AI agent with kagent using model ${agentName || 'N/A'}. Create yours at https://kagent.dev!`;
+    const shareTextTemplate = `🎉 I deployed my first AI agent with Maduro using model ${agentName || 'N/A'}.`;
 
     return (
         <>
@@ -46,7 +46,7 @@ export function FinishStep({ agentName, onFinish, shareOnTwitter, shareOnLinkedI
                     <ul className="space-y-1.5 text-sm text-muted-foreground text-left max-w-lg mx-auto list-disc list-inside">
                         <li>What pods are running in the default namespace?</li>
                         <li>List all available Deployments.</li>
-                        <li>Get the details of the &apos;kagent&apos; service in the &apos;kagent&apos; namespace.</li>
+                        <li>Get the details of the &apos;maduro&apos; service in the &apos;maduro&apos; namespace.</li>
                     </ul>
                 </div>
             </CardContent>

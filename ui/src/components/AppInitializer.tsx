@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { OnboardingWizard } from './onboarding/OnboardingWizard';
 
-const LOCAL_STORAGE_KEY = 'kagent-onboarding';
+const LOCAL_STORAGE_KEY = 'maduro-onboarding';
 
 export function AppInitializer({ children }: { children: React.ReactNode }) {
   const [isOnboarding, setIsOnboarding] = useState<boolean | null>(null); // Use null to indicate loading state

@@ -1,6 +1,6 @@
 apiVersion: v2
-name: kagent
-description: A Helm chart for kagent, built with Google ADK
+name: maduro
+description: A Helm chart for Maduro, built with Google ADK
 type: application
 version: ${VERSION}
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
     version: ${KMCP_VERSION}
     repository: oci://ghcr.io/kagent-dev/kmcp/helm
     condition: kmcp.enabled
-  - name: kagent-tools
+  - name: maduro-tools
     version: 0.0.12
     repository: oci://ghcr.io/kagent-dev/tools/helm
     condition: kagent-tools.enabled
