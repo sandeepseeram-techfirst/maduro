@@ -39,6 +39,16 @@ fi
 
 # Update dependencies
 echo "Updating Helm dependencies..."
+# Ensure Chart.yaml exists before updating dependencies
+if [ ! -f "$ROOT_DIR/helm/maduro/Chart.yaml" ]; then
+    echo "Error: $ROOT_DIR/helm/maduro/Chart.yaml not found. Template substitution might have failed."
+    exit 1
+fi
+if [ ! -f "$ROOT_DIR/helm/maduro-crds/Chart.yaml" ]; then
+    echo "Error: $ROOT_DIR/helm/maduro-crds/Chart.yaml not found. Template substitution might have failed."
+    exit 1
+fi
+
 helm dependency update "$ROOT_DIR/helm/maduro"
 helm dependency update "$ROOT_DIR/helm/maduro-crds"
 
