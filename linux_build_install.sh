@@ -58,5 +58,15 @@ fi
 
 # 3. Install
 echo "Installing Maduro..."
+
+# Prompt for OpenAI Key if not set
+if [ -z "$OPENAI_API_KEY" ]; then
+    echo "OPENAI_API_KEY is not set."
+    read -p "Enter your OpenAI API Key (or press Enter to skip/use default provider): " input_key
+    if [ ! -z "$input_key" ]; then
+        export OPENAI_API_KEY=$input_key
+    fi
+fi
+
 export VERSION=$VERSION
 bash install_maduro.sh
