@@ -7,7 +7,7 @@ RELEASE_NAME=${RELEASE_NAME:-"maduro"}
 VERSION=${VERSION:-"0.0.1"}
 KMCP_VERSION=${KMCP_VERSION:-"v0.0.1"} # You might need to adjust this default or fetch it
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-ROOT_DIR=$(dirname "$SCRIPT_DIR")
+ROOT_DIR=$SCRIPT_DIR
 
 echo "Installing Maduro to namespace: $NAMESPACE"
 
