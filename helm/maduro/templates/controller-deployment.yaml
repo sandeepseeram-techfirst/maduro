@@ -80,11 +80,13 @@ spec:
               port: http
             periodSeconds: 15
             initialDelaySeconds: 15
+            failureThreshold: 30
           readinessProbe:
             httpGet:
               path: /health
               port: http
             periodSeconds: 30
+            failureThreshold: 3
           {{- if or (eq .Values.database.type "sqlite") (gt (len .Values.controller.volumeMounts) 0) }}
           volumeMounts:
             {{- if eq .Values.database.type "sqlite" }}
