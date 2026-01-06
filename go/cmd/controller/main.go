@@ -30,6 +30,8 @@ func main() {
 	authorizer := &auth.NoopAuthorizer{}
 	authenticator := &auth.UnsecureAuthenticator{}
 	app.Start(func(bootstrap app.BootstrapConfig) (*app.ExtensionConfig, error) {
+		// Temporary: Log that we are starting to help debug
+		bootstrap.Manager.GetLogger().Info("Initializing Extension Config...")
 		return &app.ExtensionConfig{
 			Authenticator:    authenticator,
 			Authorizer:       authorizer,

@@ -87,6 +87,14 @@ spec:
               port: http
             periodSeconds: 30
             failureThreshold: 3
+          # Liveness probe to restart if stuck
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+            initialDelaySeconds: 60
           {{- if or (eq .Values.database.type "sqlite") (gt (len .Values.controller.volumeMounts) 0) }}
           volumeMounts:
             {{- if eq .Values.database.type "sqlite" }}
