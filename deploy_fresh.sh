@@ -291,6 +291,8 @@ helm upgrade --install maduro helm/maduro \
     --set controller.agentImage.registry="" \
     --set controller.agentImage.repository="$REGISTRY/$REPO/app" \
     --set controller.agentImage.tag="$VERSION" \
+    --set global.tag="$VERSION" \
+    --set global.registry="" \
     $HELM_ARGS
 
 echo "=================================================="
