@@ -33,47 +33,54 @@ export KMCP_VERSION=$KMCP_VERSION
     export VERSION
     export KMCP_VERSION
 
+    # Check for envsubst availability
     if command -v envsubst >/dev/null 2>&1; then
         echo "Using envsubst for template substitution..."
         if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
              envsubst < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        else
-             echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found."
         fi
-        
         if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
             envsubst < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
-        else
-            echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found."
         fi
-
+    
+    # Check for python3 availability
     elif command -v python3 >/dev/null 2>&1; then
         echo "envsubst not found, using python3 fallback..."
         if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
             python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        else
-             # If template is missing, maybe Chart.yaml is already there (e.g. from repo)
-             echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found. Assuming Chart.yaml exists."
         fi
-        
         if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
             python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
-        else
-             echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found. Assuming Chart.yaml exists."
         fi
-    else
+    
+    # Check for python availability
+    elif command -v python >/dev/null 2>&1; then
         echo "envsubst and python3 not found, using python fallback..."
         if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
             python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        else
-             # If template is missing, maybe Chart.yaml is already there (e.g. from repo)
-             echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found. Assuming Chart.yaml exists."
         fi
-        
         if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
             python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        fi
+    
+    # Last resort: cp and sed
+    else
+        echo "No suitable tool found for template substitution (envsubst, python3, python)."
+        echo "Falling back to cp and sed..."
+        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
+            cp "$ROOT_DIR/helm/maduro/Chart-template.yaml" "$ROOT_DIR/helm/maduro/Chart.yaml"
+            sed -i "s/\${VERSION}/$VERSION/g" "$ROOT_DIR/helm/maduro/Chart.yaml"
+            sed -i "s/\${KMCP_VERSION}/$KMCP_VERSION/g" "$ROOT_DIR/helm/maduro/Chart.yaml"
         else
-             echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found. Assuming Chart.yaml exists."
+             echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found."
+        fi
+        
+        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
+            cp "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+            sed -i "s/\${VERSION}/$VERSION/g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+            sed -i "s/\${KMCP_VERSION}/$KMCP_VERSION/g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+        else
+             echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found."
         fi
     fi
 
