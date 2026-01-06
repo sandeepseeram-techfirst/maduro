@@ -28,7 +28,7 @@ ENV PATH=$BUN_INSTALL/bin:$PATH
 # brew install oven-sh/bun/bun
 RUN --mount=type=cache,target=/cache/bun,rw \
     mkdir -p $BUN_INSTALL  \
-    && curl -fsSL https://bun.sh/install | bash -s "bun-v$TOOLS_BUN_VERSION" \
+    && curl -fsSL https://bun.sh/install | bash \
     && bun --version
 
 WORKDIR /app/ui
@@ -73,7 +73,7 @@ ENV PATH=$BUN_INSTALL/bin:$PATH
 # Install Bun in native arch for running (uses official install script)
 # brew install oven-sh/bun/bun
 RUN mkdir -p $BUN_INSTALL  \
-    && curl -fsSL https://bun.sh/install | bash -s "bun-v$TOOLS_BUN_VERSION" \
+    && curl -fsSL https://bun.sh/install | bash \
     && bun --version
 
 RUN mkdir -p /app/ui/public /tmp/nginx/client_temp /tmp/nginx/proxy_temp /tmp/nginx/fastcgi_temp /tmp/nginx/uwsgi_temp /tmp/nginx/scgi_temp  \
