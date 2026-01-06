@@ -22,10 +22,25 @@ build_images() {
     # ADK
     echo "Building ADK..."
     docker build -t "$REGISTRY/$REPO/kagent-adk:$VERSION" -f python/Dockerfile ./python
+
+    # Push ADK immediately if local registry is used, to make it available for App build
+    # Or, rely on local cache if registry is localhost but builder is not finding it.
+    # The error "dial tcp 127.0.0.1:5001: connect: connection refused" suggests the build container 
+    # cannot reach the registry on localhost.
+    # We will tag ADK as a local image name that doesn't require registry lookup for the next step,
+    # OR we try to push it if registry is available. 
+    # BUT, since we are inside a cluster/node, maybe localhost:5001 is not running.
+    # Let's simply tag it with a local name and pass that to the next build.
+    
+    LOCAL_ADK_TAG="maduro-local/kagent-adk:$VERSION"
+    docker tag "$REGISTRY/$REPO/kagent-adk:$VERSION" "$LOCAL_ADK_TAG"
     
     # App
     echo "Building App..."
-    docker build --build-arg KAGENT_ADK_VERSION=$VERSION --build-arg DOCKER_REGISTRY=$REGISTRY \
+    # We pass the local tag components to the build args
+    docker build --build-arg KAGENT_ADK_VERSION=$VERSION \
+        --build-arg DOCKER_REGISTRY="maduro-local" \
+        --build-arg DOCKER_REPO="" \
         -t "$REGISTRY/$REPO/app:$VERSION" -f python/Dockerfile.app ./python
 }
 
