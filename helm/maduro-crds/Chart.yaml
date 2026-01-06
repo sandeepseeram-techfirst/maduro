@@ -1,0 +1,10 @@
+apiVersion: v2
+name: maduro-crds
+description: CRDs for maduro
+type: application
+version: 0.0.1
+dependencies:
+  - name: kmcp-crds
+    version: v0.0.1
+    repository: oci://ghcr.io/kagent-dev/kmcp/helm
+    condition: kmcp.enabled

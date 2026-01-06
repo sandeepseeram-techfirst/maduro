@@ -19,88 +19,20 @@ command -v helm >/dev/null 2>&1 || { echo >&2 "I require helm but it's not insta
 command -v kubectl >/dev/null 2>&1 || { echo >&2 "I require kubectl but it's not installed.  Aborting."; exit 1; }
 
 # Generate Chart.yaml from templates
-echo "Generating Helm charts..."
-export VERSION=$VERSION
-export KMCP_VERSION=$KMCP_VERSION
-
-# We use python to simulate envsubst if it's not available, or just assume envsubst is there (standard in many environments, but maybe not windows git bash)
-# Let's try to use a simple sed or just python for reliability if envsubst is missing.
-# For now, let's assume envsubst or simple cp if vars are not critical for basic test.
-# Actually, the VERSION is important.
-
-    # Try envsubst first, then python3, then python
-    # We need to export variables for python to pick them up via os.environ if not using envsubst
-    export VERSION
-    export KMCP_VERSION
-
-    # Check for envsubst availability
-    if command -v envsubst >/dev/null 2>&1; then
-        echo "Using envsubst for template substitution..."
-        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
-             envsubst < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        fi
-        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
-            envsubst < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
-        fi
-    
-    # Check for python3 availability
-    elif command -v python3 >/dev/null 2>&1; then
-        echo "envsubst not found, using python3 fallback..."
-        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
-            python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        fi
-        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
-            python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
-        fi
-    
-    # Check for python availability
-    elif command -v python >/dev/null 2>&1; then
-        echo "envsubst and python3 not found, using python fallback..."
-        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
-            python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        fi
-        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
-            python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
-        fi
-    
-    # Last resort: cp and sed
-    else
-        echo "No suitable tool found for template substitution (envsubst, python3, python)."
-        echo "Falling back to cp and sed..."
-        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
-            cp "$ROOT_DIR/helm/maduro/Chart-template.yaml" "$ROOT_DIR/helm/maduro/Chart.yaml"
-            sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
-            sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
-        else
-             echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found."
-        fi
-        
-        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
-            cp "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-            sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-            sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        else
-             echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found."
-        fi
-    fi
+# echo "Generating Helm charts..."
+# Skipping template generation as we are using static Chart.yaml files now.
+# This avoids issues with envsubst/python missing in minimal environments.
 
 # Update dependencies
 echo "Updating Helm dependencies..."
 # Ensure Chart.yaml exists before updating dependencies
 if [ ! -f "$ROOT_DIR/helm/maduro/Chart.yaml" ]; then
-    echo "Warning: $ROOT_DIR/helm/maduro/Chart.yaml not found. Template substitution might have failed."
-    echo "Attempting to create a basic Chart.yaml from template without substitution as last resort..."
-    cp "$ROOT_DIR/helm/maduro/Chart-template.yaml" "$ROOT_DIR/helm/maduro/Chart.yaml"
-    # Basic sed replacement if simple substitution is needed and python/envsubst failed
-    sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
-    sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
+    echo "Error: $ROOT_DIR/helm/maduro/Chart.yaml not found. This file should be present in the repository."
+    exit 1
 fi
 if [ ! -f "$ROOT_DIR/helm/maduro-crds/Chart.yaml" ]; then
-    echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart.yaml not found. Template substitution might have failed."
-    echo "Attempting to create a basic Chart.yaml from template without substitution as last resort..."
-    cp "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-    sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-    sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+    echo "Error: $ROOT_DIR/helm/maduro-crds/Chart.yaml not found. This file should be present in the repository."
+    exit 1
 fi
 
 helm dependency update "$ROOT_DIR/helm/maduro"
