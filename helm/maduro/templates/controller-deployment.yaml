@@ -50,7 +50,7 @@ spec:
       {{- end }}
       containers:
         - name: controller
-          image: "{{ .Values.controller.image.registry | default .Values.registry  }}/{{ .Values.controller.image.repository }}:{{ coalesce .Values.tag .Values.controller.image.tag .Chart.Version }}"
+          image: "{{- $reg := .Values.controller.image.registry | default .Values.registry -}}{{- if $reg -}}{{ $reg }}/{{- end -}}{{ .Values.controller.image.repository }}:{{ coalesce .Values.tag .Values.controller.image.tag .Chart.Version }}"
           imagePullPolicy: {{ .Values.controller.image.pullPolicy | default .Values.imagePullPolicy }}
           env:
             - name: KAGENT_NAMESPACE
