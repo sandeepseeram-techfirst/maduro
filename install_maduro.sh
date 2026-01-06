@@ -30,16 +30,35 @@ export KMCP_VERSION=$KMCP_VERSION
 
     # Try envsubst first, then python3, then python
     if command -v envsubst >/dev/null 2>&1; then
-        envsubst < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        envsubst < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        # Check if Chart-template.yaml exists
+        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
+             envsubst < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+        else
+             echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found."
+        fi
+        
+        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
+            envsubst < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        else
+            echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found."
+        fi
+
     elif command -v python3 >/dev/null 2>&1; then
         echo "envsubst not found, using python3 fallback..."
-        python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
+            python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+        fi
+        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
+            python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        fi
     else
         echo "envsubst and python3 not found, using python fallback..."
-        python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-        python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
+            python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+        fi
+        if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
+            python -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        fi
     fi
 
 # Update dependencies
