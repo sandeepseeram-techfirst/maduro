@@ -47,9 +47,15 @@ export KMCP_VERSION=$KMCP_VERSION
         echo "envsubst not found, using python3 fallback..."
         if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
             python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" > "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+        else
+             # If template is missing, maybe Chart.yaml is already there (e.g. from repo)
+             echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found. Assuming Chart.yaml exists."
         fi
+        
         if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
             python3 -c "import os,sys; content=sys.stdin.read(); print(content.replace('\${VERSION}', os.environ.get('VERSION', '0.0.1')).replace('\${KMCP_VERSION}', os.environ.get('KMCP_VERSION', 'v0.0.1')))" < "$ROOT_DIR/helm/maduro/Chart-template.yaml" > "$ROOT_DIR/helm/maduro/Chart.yaml"
+        else
+             echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found. Assuming Chart.yaml exists."
         fi
     else
         echo "envsubst and python3 not found, using python fallback..."
