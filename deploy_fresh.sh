@@ -295,12 +295,15 @@ helm upgrade --install maduro helm/maduro \
     --set controller.image.registry="" \
     --set controller.image.repository="maduro-dev/maduro/controller" \
     --set controller.image.tag="$VERSION" \
+    --set controller.image.pullPolicy="IfNotPresent" \
     --set ui.image.registry="" \
     --set ui.image.repository="maduro-dev/maduro/ui" \
     --set ui.image.tag="$VERSION" \
+    --set ui.image.pullPolicy="IfNotPresent" \
     --set controller.agentImage.registry="" \
     --set controller.agentImage.repository="maduro-dev/maduro/app" \
     --set controller.agentImage.tag="$VERSION" \
+    --set controller.agentImage.pullPolicy="IfNotPresent" \
     --set global.tag="$VERSION" \
     --set global.registry="" \
     $HELM_ARGS
