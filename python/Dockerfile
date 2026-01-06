@@ -10,7 +10,7 @@ ENV LC_ALL=C.UTF-8
 
 # Install packages with conditional SSL verification
 # When DISABLE_SSL_VERIFY=1, use --no-check-certificate to bypass SSL checks (development only)
-RUN --mount=type=cache,target=/var/cache/apk,rw \
+RUN --mount=type=cache,target=/var/cache/apk \
     if [ "$DISABLE_SSL_VERIFY" = "1" ]; then \
         echo "WARNING: Disabling SSL verification for apk (development only)"; \
         apk update --no-check-certificate && apk add --no-check-certificate \
@@ -60,7 +60,7 @@ RUN addgroup -g 1001 pythongroup                           && \
     chown    -vR 1001:1001 /.kagent /python
 
 # Install anthropic sandbox runtime and dependencies
-RUN --mount=type=cache,target=/var/cache/apk,rw \
+RUN --mount=type=cache,target=/var/cache/apk \
     apk add \
     nodejs npm bubblewrap socat ripgrep
 
@@ -80,7 +80,7 @@ RUN --mount=type=cache,target=/root/.npm \
 ENV PATH="/opt/sandbox-runtime/node_modules/.bin:$PATH"
 
 # Install anthropic sandbox runtime and dependencies
-RUN --mount=type=cache,target=/var/cache/apk,rw \
+RUN --mount=type=cache,target=/var/cache/apk \
     apk add \
     crane
 
