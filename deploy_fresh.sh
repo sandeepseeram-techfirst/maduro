@@ -235,6 +235,13 @@ echo "  -> All images built successfully."
 # -------------------------------------------------------------------------------------------------
 echo -e "\n[3/4] Loading Images into Cluster..."
 
+# Try to push to local registry if available (assuming localhost:5001 is a registry)
+echo "  -> Pushing images to local registry $REGISTRY..."
+# We ignore errors here in case it's not a real registry (like just a tag for Kind)
+docker push "$REGISTRY/$REPO/controller:$VERSION" || true
+docker push "$REGISTRY/$REPO/ui:$VERSION" || true
+docker push "$REGISTRY/$REPO/app:$VERSION" || true
+
 if command -v kind >/dev/null 2>&1; then
     echo "  -> Kind detected. Loading images..."
     kind load docker-image "$REGISTRY/$REPO/controller:$VERSION" --name maduro || true
