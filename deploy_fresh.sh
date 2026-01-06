@@ -305,7 +305,7 @@ helm upgrade --install maduro helm/maduro \
     --set controller.agentImage.tag="$VERSION" \
     --set controller.agentImage.pullPolicy="IfNotPresent" \
     --set global.tag="$VERSION" \
-    --set registry="" \
+    --set registry="docker.io" \
     $HELM_ARGS
 
 echo "=================================================="
