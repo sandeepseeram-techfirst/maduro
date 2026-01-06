@@ -282,6 +282,15 @@ helm upgrade --install maduro helm/maduro \
     --set controller.service.type=LoadBalancer \
     --set imagePullPolicy=IfNotPresent \
     --set kmcp.enabled=true \
+    --set controller.image.registry="" \
+    --set controller.image.repository="$REGISTRY/$REPO/controller" \
+    --set controller.image.tag="$VERSION" \
+    --set ui.image.registry="" \
+    --set ui.image.repository="$REGISTRY/$REPO/ui" \
+    --set ui.image.tag="$VERSION" \
+    --set controller.agentImage.registry="" \
+    --set controller.agentImage.repository="$REGISTRY/$REPO/app" \
+    --set controller.agentImage.tag="$VERSION" \
     $HELM_ARGS
 
 echo "=================================================="
