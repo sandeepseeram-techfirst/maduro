@@ -69,16 +69,16 @@ export KMCP_VERSION=$KMCP_VERSION
         echo "Falling back to cp and sed..."
         if [ -f "$ROOT_DIR/helm/maduro/Chart-template.yaml" ]; then
             cp "$ROOT_DIR/helm/maduro/Chart-template.yaml" "$ROOT_DIR/helm/maduro/Chart.yaml"
-            sed -i "s/\${VERSION}/$VERSION/g" "$ROOT_DIR/helm/maduro/Chart.yaml"
-            sed -i "s/\${KMCP_VERSION}/$KMCP_VERSION/g" "$ROOT_DIR/helm/maduro/Chart.yaml"
+            sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
+            sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
         else
              echo "Warning: $ROOT_DIR/helm/maduro/Chart-template.yaml not found."
         fi
         
         if [ -f "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" ]; then
             cp "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-            sed -i "s/\${VERSION}/$VERSION/g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-            sed -i "s/\${KMCP_VERSION}/$KMCP_VERSION/g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+            sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+            sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
         else
              echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart-template.yaml not found."
         fi
@@ -92,15 +92,15 @@ if [ ! -f "$ROOT_DIR/helm/maduro/Chart.yaml" ]; then
     echo "Attempting to create a basic Chart.yaml from template without substitution as last resort..."
     cp "$ROOT_DIR/helm/maduro/Chart-template.yaml" "$ROOT_DIR/helm/maduro/Chart.yaml"
     # Basic sed replacement if simple substitution is needed and python/envsubst failed
-    sed -i "s/\${VERSION}/$VERSION/g" "$ROOT_DIR/helm/maduro/Chart.yaml"
-    sed -i "s/\${KMCP_VERSION}/$KMCP_VERSION/g" "$ROOT_DIR/helm/maduro/Chart.yaml"
+    sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
+    sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro/Chart.yaml"
 fi
 if [ ! -f "$ROOT_DIR/helm/maduro-crds/Chart.yaml" ]; then
     echo "Warning: $ROOT_DIR/helm/maduro-crds/Chart.yaml not found. Template substitution might have failed."
     echo "Attempting to create a basic Chart.yaml from template without substitution as last resort..."
     cp "$ROOT_DIR/helm/maduro-crds/Chart-template.yaml" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-    sed -i "s/\${VERSION}/$VERSION/g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
-    sed -i "s/\${KMCP_VERSION}/$KMCP_VERSION/g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+    sed -i "s|\${VERSION}|$VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
+    sed -i "s|\${KMCP_VERSION}|$KMCP_VERSION|g" "$ROOT_DIR/helm/maduro-crds/Chart.yaml"
 fi
 
 helm dependency update "$ROOT_DIR/helm/maduro"
