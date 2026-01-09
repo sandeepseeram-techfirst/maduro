@@ -25,7 +25,7 @@ DEPLOYED COMPONENTS:
 {{- end }}
 
 ENABLED TOOLS:
-{{- if index .Values "kagent-tools" "enabled" }}
+{{- if .Values.kagentTools.enabled }}
   - Tool Server: Kagent's Built-in tools
 {{- end }}
 {{- range $tool, $config := .Values.tools }}
