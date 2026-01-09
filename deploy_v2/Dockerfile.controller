@@ -1,0 +1,29 @@
+# Dockerfile for the Controller (Go)
+FROM golang:1.23-alpine AS builder
+
+WORKDIR /workspace
+
+# Install build tools
+RUN apk add --no-cache git make build-base
+
+# Copy source
+COPY go/ .
+
+# Build
+# We explicitly disable CGO for a static binary
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+# Build the controller binary
+# Assuming the main entrypoint is cmd/controller/main.go
+RUN go build -ldflags="-w -s" -o bin/controller cmd/controller/main.go
+
+# Runtime Stage
+FROM alpine:3.19
+WORKDIR /
+COPY --from=builder /workspace/bin/controller /controller
+
+USER 65532:65532
+
+ENTRYPOINT ["/controller"]
