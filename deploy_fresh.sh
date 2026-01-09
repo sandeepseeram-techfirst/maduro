@@ -315,6 +315,7 @@ helm upgrade --install maduro helm/maduro \
     --set global.tag="$VERSION" \
     --set registry="" \
     --set global.registry="" \
+    --set global.image.registry="" \
     $HELM_ARGS
 
 # Install Agents
@@ -326,7 +327,10 @@ for d in helm/agents/*; do
         helm upgrade --install "$name" "$d" \
             --namespace "$NAMESPACE" \
             --wait \
-            > /dev/null 2>&1 || echo "     [WARNING] Failed to install agent $name"
+            --set image.registry="" \
+            --set image.repository="$REGISTRY/$REPO/$name" \
+            --set image.tag="$VERSION" \
+            > /dev/null 2>&1 || echo "     [WARNING] Failed to install agent $name (continuing...)"
     fi
 done
 
@@ -339,7 +343,10 @@ for d in helm/tools/*; do
         helm upgrade --install "$name" "$d" \
             --namespace "$NAMESPACE" \
             --wait \
-            > /dev/null 2>&1 || echo "     [WARNING] Failed to install tool $name"
+            --set image.registry="" \
+            --set image.repository="$REGISTRY/$REPO/$name" \
+            --set image.tag="$VERSION" \
+            > /dev/null 2>&1 || echo "     [WARNING] Failed to install tool $name (continuing...)"
     fi
 done
 
