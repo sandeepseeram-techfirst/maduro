@@ -317,6 +317,32 @@ helm upgrade --install maduro helm/maduro \
     --set global.registry="" \
     $HELM_ARGS
 
+# Install Agents
+echo "  -> Installing Agents..."
+for d in helm/agents/*; do
+    if [ -d "$d" ]; then
+        name=$(basename "$d")
+        echo "     Installing agent: $name..."
+        helm upgrade --install "$name" "$d" \
+            --namespace "$NAMESPACE" \
+            --wait \
+            > /dev/null 2>&1 || echo "     [WARNING] Failed to install agent $name"
+    fi
+done
+
+# Install Tools
+echo "  -> Installing Tools..."
+for d in helm/tools/*; do
+    if [ -d "$d" ]; then
+        name=$(basename "$d")
+        echo "     Installing tool: $name..."
+        helm upgrade --install "$name" "$d" \
+            --namespace "$NAMESPACE" \
+            --wait \
+            > /dev/null 2>&1 || echo "     [WARNING] Failed to install tool $name"
+    fi
+done
+
 echo "=================================================="
 echo "   DEPLOYMENT SUCCESSFUL"
 echo "=================================================="
