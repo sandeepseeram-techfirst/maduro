@@ -347,6 +347,7 @@ helm upgrade --install maduro helm/maduro \
     --set registry="" \
     --set global.registry="" \
     --set global.image.registry="" \
+    --set "controller.agentImage.registry=" \
     $HELM_ARGS
 
 # Install Agents
