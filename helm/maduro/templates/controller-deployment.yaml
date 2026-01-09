@@ -118,4 +118,9 @@ spec:
           env:
              - name: LOG_LEVEL
                value: debug
+             - name: PYTHONUNBUFFERED
+               value: "1"
+          # Run the built-in kagent bash tool as an MCP server
+          # This acts as a generic executor for kubectl/helm commands
+          command: ["kagent-adk", "run", "kagent.adk.tools.bash_tool:bash_tool", "--host", "0.0.0.0", "--port", "8084"]
         {{- end }}

@@ -343,6 +343,9 @@ helm upgrade --install maduro helm/maduro \
     --set controller.agentImage.repository="$REGISTRY/$REPO/app" \
     --set controller.agentImage.tag="$VERSION" \
     --set controller.agentImage.pullPolicy="IfNotPresent" \
+    --set kagentTools.image.registry="" \
+    --set kagentTools.image.repository="$REGISTRY/$REPO/app" \
+    --set kagentTools.image.tag="$VERSION" \
     --set global.tag="$VERSION" \
     --set registry="" \
     --set global.registry="" \
