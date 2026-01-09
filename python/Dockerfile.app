@@ -9,11 +9,12 @@ ARG DOCKER_REPO=kagent-dev/kagent
 
 FROM $DOCKER_REGISTRY${DOCKER_REPO:+/}$DOCKER_REPO/kagent-adk:$KAGENT_ADK_VERSION
 
-# Install kubectl and helm
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+# Install kubectl (hardcoded stable version to ensure build stability)
+RUN curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl" && \
     chmod +x kubectl && \
     mv kubectl /usr/local/bin/
 
+# Install helm
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
     chmod 700 get_helm.sh && \
     ./get_helm.sh && \
