@@ -109,8 +109,8 @@ spec:
           {{- end }}
         {{- if .Values.kagentTools.enabled }}
         - name: tools
-          image: "{{- $reg := .Values.registry | default .Values.registry -}}{{- if $reg -}}{{ $reg }}/{{- end -}}kagent-dev/kagent/tools:{{ coalesce .Values.tag .Values.controller.image.tag .Chart.Version }}"
-          imagePullPolicy: {{ .Values.controller.image.pullPolicy | default .Values.imagePullPolicy }}
+          image: "{{- $reg := .Values.kagentTools.image.registry -}}{{- if $reg -}}{{ $reg }}/{{- end -}}{{ .Values.kagentTools.image.repository }}:{{ .Values.kagentTools.image.tag }}"
+          imagePullPolicy: {{ .Values.kagentTools.image.pullPolicy | default .Values.imagePullPolicy }}
           ports:
             - name: mcp
               containerPort: 8084
