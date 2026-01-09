@@ -212,10 +212,15 @@ kmcp:
 # BUILT-IN TOOLS
 # ==============================================================================
 
-kagent-tools:
+kagentTools:
   fullnameOverride: kagent-tools
   enabled: true
   replicaCount: 1
+  image:
+    registry: ghcr.io
+    repository: kagent-dev/kagent-tools
+    tag: 0.0.1
+    pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 100m
