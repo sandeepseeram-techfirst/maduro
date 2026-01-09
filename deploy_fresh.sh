@@ -173,6 +173,37 @@ echo "  -> Processing Agent Charts..."
 for d in helm/agents/*; do
     if [ -d "$d" ]; then
         generate_chart_yaml "$d"
+        
+        # Create _helpers.tpl if missing (required for kagent.* templates)
+        mkdir -p "$d/templates"
+        if [ ! -f "$d/templates/_helpers.tpl" ]; then
+            echo "     Creating _helpers.tpl for $(basename "$d")..."
+            cat > "$d/templates/_helpers.tpl" <<EOF
+{{/*
+Expand the namespace of the release.
+*/}}
+{{- define "kagent.namespace" -}}
+{{- default .Release.Namespace .Values.namespaceOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "kagent.labels" -}}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+app.kubernetes.io/name: {{ .Chart.Name }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Default model config name
+*/}}
+{{- define "kagent.defaultModelConfigName" -}}
+default-model-config
+{{- end -}}
+EOF
+        fi
     fi
 done
 
@@ -327,8 +358,8 @@ for d in helm/agents/*; do
         helm upgrade --install "$name" "$d" \
             --namespace "$NAMESPACE" \
             --wait \
-            --set image.registry="" \
-            --set image.repository="$REGISTRY/$REPO/$name" \
+            --set image.registry="$REGISTRY" \
+            --set image.repository="$REPO/$name" \
             --set image.tag="$VERSION" \
             > /dev/null 2>&1 || echo "     [WARNING] Failed to install agent $name (continuing...)"
     fi
@@ -343,8 +374,8 @@ for d in helm/tools/*; do
         helm upgrade --install "$name" "$d" \
             --namespace "$NAMESPACE" \
             --wait \
-            --set image.registry="" \
-            --set image.repository="$REGISTRY/$REPO/$name" \
+            --set image.registry="$REGISTRY" \
+            --set image.repository="$REPO/$name" \
             --set image.tag="$VERSION" \
             > /dev/null 2>&1 || echo "     [WARNING] Failed to install tool $name (continuing...)"
     fi
