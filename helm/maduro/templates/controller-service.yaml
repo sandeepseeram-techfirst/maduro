@@ -12,5 +12,9 @@ spec:
       targetPort: {{ .Values.controller.service.ports.targetPort }}
       protocol: TCP
       name: controller
+    - port: 8084
+      targetPort: 8084
+      protocol: TCP
+      name: mcp-server
   selector:
     {{- include "maduro.controller.selectorLabels" . | nindent 4 }}
