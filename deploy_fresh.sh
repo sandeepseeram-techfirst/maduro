@@ -358,9 +358,6 @@ for d in helm/agents/*; do
         helm upgrade --install "$name" "$d" \
             --namespace "$NAMESPACE" \
             --wait \
-            --set image.registry="$REGISTRY" \
-            --set image.repository="$REPO/$name" \
-            --set image.tag="$VERSION" \
             > /dev/null 2>&1 || echo "     [WARNING] Failed to install agent $name (continuing...)"
     fi
 done
@@ -374,9 +371,6 @@ for d in helm/tools/*; do
         helm upgrade --install "$name" "$d" \
             --namespace "$NAMESPACE" \
             --wait \
-            --set image.registry="$REGISTRY" \
-            --set image.repository="$REPO/$name" \
-            --set image.tag="$VERSION" \
             > /dev/null 2>&1 || echo "     [WARNING] Failed to install tool $name (continuing...)"
     fi
 done
