@@ -18,7 +18,7 @@ spec:
         {{- include "maduro.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: tools
     spec:
-      serviceAccountName: {{ include "maduro.serviceAccountName" . }}
+      serviceAccountName: {{ include "maduro.fullname" . }}-controller
       containers:
         - name: tools
           image: "{{- $reg := .Values.kagentTools.image.registry -}}{{- if $reg -}}{{ $reg }}/{{- end -}}{{ .Values.kagentTools.image.repository }}:{{ .Values.kagentTools.image.tag }}"
