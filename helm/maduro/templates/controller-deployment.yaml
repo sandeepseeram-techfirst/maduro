@@ -120,7 +120,7 @@ spec:
                value: debug
              - name: PYTHONUNBUFFERED
                value: "1"
-          # Run the built-in kagent bash tool as an MCP server
-          # This acts as a generic executor for kubectl/helm commands
-          command: ["kagent-adk", "run", "kagent.adk.tools.bash_tool:bash_tool", "--host", "0.0.0.0", "--port", "8084"]
+          # Run the custom Python MCP server for Kubernetes tools
+          # This implements k8s_get_resources and k8s_get_available_api_resources
+          command: ["python", "/app/k8s_mcp_server.py", "--transport", "sse", "--port", "8084", "--host", "0.0.0.0"]
         {{- end }}

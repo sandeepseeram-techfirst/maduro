@@ -36,6 +36,9 @@ RUN pip install uv
 # We copy the entire python directory
 COPY python/ /app/python_src/
 
+# Install FastMCP dependencies explicitly if not in ADK
+RUN pip install "mcp[cli]"
+
 # 4. Install Kagent ADK
 WORKDIR /app/python_src
 # We need to build/install the packages.
@@ -48,7 +51,10 @@ RUN if [ -f pyproject.toml ]; then uv pip install --system -e .; fi
 
 # 5. Setup Entrypoint
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 8080 8084
+
+# Copy the MCP server script to a known location
+RUN cp /app/python_src/k8s_mcp_server.py /app/k8s_mcp_server.py
 
 # By default, run the agent runtime
 ENTRYPOINT ["kagent-adk"]
