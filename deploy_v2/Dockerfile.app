@@ -60,5 +60,8 @@ EXPOSE 8080 8084
 RUN cp /app/python_src/k8s_mcp_server.py /app/k8s_mcp_server.py
 
 # By default, run the agent runtime
-ENTRYPOINT ["kagent-adk"]
-CMD ["static", "--host", "0.0.0.0", "--port", "8080"]
+# ENTRYPOINT must include the subcommand 'static' because the Controller only appends flags (e.g. --host)
+# and overrides CMD. If we only put 'kagent-adk', the flags are passed to root command which fails.
+ENTRYPOINT ["kagent-adk", "static"]
+# CMD is ignored when Controller sets Args, but good for local testing
+CMD ["--host", "0.0.0.0", "--port", "8080"]
