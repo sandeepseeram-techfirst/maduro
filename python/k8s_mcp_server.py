@@ -77,7 +77,15 @@ if __name__ == "__main__":
     elif args.transport == "http":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (Streamable HTTP)")
         # Use uvicorn to serve the Streamable HTTP app directly, forcing HTTP/1.1
-        uvicorn.run(mcp.streamable_http_app, host=args.host, port=args.port, http="h11")
+        # Enable trace logging and allow all forwarded IPs to debug connection issues
+        uvicorn.run(
+            mcp.streamable_http_app, 
+            host=args.host, 
+            port=args.port, 
+            http="h11", 
+            log_level="trace",
+            forwarded_allow_ips="*"
+        )
     else:
         logger.info("Starting MCP server (STDIO)")
         mcp.run()
