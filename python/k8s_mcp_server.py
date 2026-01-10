@@ -72,12 +72,12 @@ if __name__ == "__main__":
 
     if args.transport == "sse":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (SSE)")
-        # Use uvicorn to serve the SSE app directly
-        uvicorn.run(mcp.sse_app, host=args.host, port=args.port)
+        # Use uvicorn to serve the SSE app directly, forcing HTTP/1.1 to avoid 421 errors
+        uvicorn.run(mcp.sse_app, host=args.host, port=args.port, http="h11")
     elif args.transport == "http":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (Streamable HTTP)")
-        # Use uvicorn to serve the Streamable HTTP app directly
-        uvicorn.run(mcp.streamable_http_app, host=args.host, port=args.port)
+        # Use uvicorn to serve the Streamable HTTP app directly, forcing HTTP/1.1
+        uvicorn.run(mcp.streamable_http_app, host=args.host, port=args.port, http="h11")
     else:
         logger.info("Starting MCP server (STDIO)")
         mcp.run()
