@@ -65,7 +65,7 @@ if __name__ == "__main__":
     import uvicorn
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--transport", default="stdio", choices=["stdio", "sse"])
+    parser.add_argument("--transport", default="stdio", choices=["stdio", "sse", "http"])
     parser.add_argument("--port", type=int, default=8080)
     parser.add_argument("--host", default="0.0.0.0")
     args, _ = parser.parse_known_args()
@@ -74,6 +74,10 @@ if __name__ == "__main__":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (SSE)")
         # Use uvicorn to serve the SSE app directly
         uvicorn.run(mcp.sse_app, host=args.host, port=args.port)
+    elif args.transport == "http":
+        logger.info(f"Starting MCP server on {args.host}:{args.port} (Streamable HTTP)")
+        # Use uvicorn to serve the Streamable HTTP app directly
+        uvicorn.run(mcp.streamable_http_app, host=args.host, port=args.port)
     else:
         logger.info("Starting MCP server (STDIO)")
         mcp.run()

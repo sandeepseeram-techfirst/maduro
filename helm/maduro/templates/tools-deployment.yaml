@@ -33,7 +33,7 @@ spec:
              - name: PYTHONUNBUFFERED
                value: "1"
           # Run the custom Python MCP server
-          command: ["python", "/app/k8s_mcp_server.py", "--transport", "sse", "--port", "8084", "--host", "0.0.0.0"]
+          command: ["python", "/app/k8s_mcp_server.py", "--transport", "http", "--port", "8084", "--host", "0.0.0.0"]
           resources:
             {{- toYaml .Values.kagentTools.resources | nindent 12 }}
 {{- end }}

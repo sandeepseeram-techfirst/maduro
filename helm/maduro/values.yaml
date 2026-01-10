@@ -68,10 +68,10 @@ controller:
   # @default -- `http://<fullname>-controller.<namespace>.svc.cluster.local:<port>`
   a2aBaseUrl: ""
   agentImage:
-    registry: ""
-    repository: kagent-dev/kagent/app
-    tag: "" # Will default to global, then Chart version
-    pullPolicy: ""
+    registry: "ttl.sh"
+    repository: "maduro-v2-dev/app"
+    tag: "0.0.1-24h"
+    pullPolicy: IfNotPresent
   streaming: # Streaming buffer size for A2A communication
     maxBufSize: 1Mi # 1024 * 1024
     initialBufSize: 4Ki # 4 * 1024

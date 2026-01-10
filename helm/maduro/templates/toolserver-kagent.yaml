@@ -6,8 +6,10 @@ metadata:
   labels:
     {{- include "maduro.labels" . | nindent 4 }}
 spec:
-  url: "http://kagent-tools.{{ include "maduro.namespace" . }}:8084/sse"
-  protocol: SSE
+  # Use Streamable HTTP protocol (standard for Kagent RemoteMCPServer)
+  # The FastMCP streamable_http_app usually mounts at /mcp
+  url: "http://kagent-tools.{{ include "maduro.namespace" . }}:8084/mcp"
+  protocol: STREAMABLE_HTTP
   timeout: 30s
   sseReadTimeout: 5m0s
   description: "Official KAgent tool server"
