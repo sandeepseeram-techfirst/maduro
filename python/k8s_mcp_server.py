@@ -59,8 +59,25 @@ def k8s_get_available_api_resources() -> str:
     """
     return run_kubectl(["api-resources"])
 
+# Define a middleware to fix the Host header for FastMCP
+class HostHeaderMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            new_headers = []
+            for name, value in scope["headers"]:
+                if name == b"host":
+                    # FastMCP validates Host header and rejects k8s service names (421 Misdirected Request)
+                    # We rewrite it to localhost:8084 which it trusts.
+                    new_headers.append((b"host", b"localhost:8084"))
+                else:
+                    new_headers.append((name, value))
+            scope["headers"] = new_headers
+        await self.app(scope, receive, send)
+
 if __name__ == "__main__":
-    # Parse CLI args to support deployment configuration
     import argparse
     import uvicorn
     
@@ -73,13 +90,17 @@ if __name__ == "__main__":
     if args.transport == "sse":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (SSE)")
         # Use uvicorn to serve the SSE app directly, forcing HTTP/1.1 to avoid 421 errors
-        uvicorn.run(mcp.sse_app, host=args.host, port=args.port, http="h11")
+        # Wrap with middleware to fix Host header validation
+        app = HostHeaderMiddleware(mcp.sse_app)
+        uvicorn.run(app, host=args.host, port=args.port, http="h11")
     elif args.transport == "http":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (Streamable HTTP)")
         # Use uvicorn to serve the Streamable HTTP app directly, forcing HTTP/1.1
         # Enable trace logging and allow all forwarded IPs to debug connection issues
+        # Wrap with middleware to fix Host header validation
+        app = HostHeaderMiddleware(mcp.streamable_http_app)
         uvicorn.run(
-            mcp.streamable_http_app, 
+            app, 
             host=args.host, 
             port=args.port, 
             http="h11", 
