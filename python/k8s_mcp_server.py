@@ -57,6 +57,8 @@ def k8s_get_available_api_resources() -> str:
 if __name__ == "__main__":
     # Parse CLI args to support deployment configuration
     import argparse
+    import uvicorn
+    
     parser = argparse.ArgumentParser()
     parser.add_argument("--transport", default="stdio", choices=["stdio", "sse"])
     parser.add_argument("--port", type=int, default=8080)
@@ -65,7 +67,8 @@ if __name__ == "__main__":
 
     if args.transport == "sse":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (SSE)")
-        mcp.run(transport="sse", host=args.host, port=args.port)
+        # Use uvicorn to serve the SSE app directly
+        uvicorn.run(mcp.sse_app, host=args.host, port=args.port)
     else:
         logger.info("Starting MCP server (STDIO)")
         mcp.run()
