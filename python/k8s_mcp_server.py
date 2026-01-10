@@ -91,14 +91,16 @@ if __name__ == "__main__":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (SSE)")
         # Use uvicorn to serve the SSE app directly, forcing HTTP/1.1 to avoid 421 errors
         # Wrap with middleware to fix Host header validation
-        app = HostHeaderMiddleware(mcp.sse_app)
+        # NOTE: mcp.sse_app is a factory method, we must call it to get the ASGI app
+        app = HostHeaderMiddleware(mcp.sse_app())
         uvicorn.run(app, host=args.host, port=args.port, http="h11")
     elif args.transport == "http":
         logger.info(f"Starting MCP server on {args.host}:{args.port} (Streamable HTTP)")
         # Use uvicorn to serve the Streamable HTTP app directly, forcing HTTP/1.1
         # Enable trace logging and allow all forwarded IPs to debug connection issues
         # Wrap with middleware to fix Host header validation
-        app = HostHeaderMiddleware(mcp.streamable_http_app)
+        # NOTE: mcp.streamable_http_app is a factory method, we must call it to get the ASGI app
+        app = HostHeaderMiddleware(mcp.streamable_http_app())
         uvicorn.run(
             app, 
             host=args.host, 
