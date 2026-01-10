@@ -24,6 +24,11 @@ def run_kubectl(args: List[str]) -> str:
         return f"Unexpected error: {str(e)}"
 
 @mcp.tool()
+def echo_test(message: str) -> str:
+    """A simple echo tool to verify server connectivity."""
+    return f"Echo from Kagent Tools: {message}"
+
+@mcp.tool()
 def k8s_get_resources(resource_type: str, namespace: Optional[str] = None, name: Optional[str] = None) -> str:
     """
     Get Kubernetes resources using kubectl.

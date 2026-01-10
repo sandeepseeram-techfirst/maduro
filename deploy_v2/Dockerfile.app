@@ -39,7 +39,8 @@ COPY python/ /app/python_src/
 # Install Python dependencies for the custom MCP server
 # Note: 'mcp[cli]' installs the SDK and CLI, but 'uvicorn' and 'fastapi' are REQUIRED 
 # for running the server in SSE/HTTP mode (which FastMCP uses under the hood).
-RUN pip install "mcp[cli]" uvicorn fastapi
+# 'kubernetes' is required for the k8s tools.
+RUN pip install "mcp[cli]" uvicorn fastapi kubernetes
 
 # 4. Install Kagent ADK
 WORKDIR /app/python_src
