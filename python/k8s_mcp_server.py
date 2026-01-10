@@ -55,9 +55,17 @@ def k8s_get_available_api_resources() -> str:
     return run_kubectl(["api-resources"])
 
 if __name__ == "__main__":
-    # FastMCP handles the execution (stdio or sse/http depending on args)
-    # But for our standalone server, we want to run it over HTTP/SSE
-    # FastMCP 'run' defaults to stdio unless configured otherwise.
-    # We will use the 'run' method which parses CLI args.
-    # Usage: python k8s_mcp_server.py --transport sse --port 8084 --host 0.0.0.0
-    mcp.run()
+    # Parse CLI args to support deployment configuration
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--transport", default="stdio", choices=["stdio", "sse"])
+    parser.add_argument("--port", type=int, default=8080)
+    parser.add_argument("--host", default="0.0.0.0")
+    args, _ = parser.parse_known_args()
+
+    if args.transport == "sse":
+        logger.info(f"Starting MCP server on {args.host}:{args.port} (SSE)")
+        mcp.run(transport="sse", host=args.host, port=args.port)
+    else:
+        logger.info("Starting MCP server (STDIO)")
+        mcp.run()
