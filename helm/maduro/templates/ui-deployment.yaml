@@ -54,14 +54,14 @@ spec:
             {{- toYaml .Values.ui.resources | nindent 12 }}
           startupProbe:
             httpGet:
-              path: /health
+              path: /
               port: http
             periodSeconds: 1
             initialDelaySeconds: 1
             failureThreshold: 30
           readinessProbe:
             httpGet:
-              path: /health
+              path: /
               port: http
             periodSeconds: 30
             failureThreshold: 3
