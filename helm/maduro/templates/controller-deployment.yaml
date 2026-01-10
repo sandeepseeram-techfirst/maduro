@@ -107,20 +107,4 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
           {{- end }}
-        {{- if .Values.kagentTools.enabled }}
-        - name: tools
-          image: "{{- $reg := .Values.kagentTools.image.registry -}}{{- if $reg -}}{{ $reg }}/{{- end -}}{{ .Values.kagentTools.image.repository }}:{{ .Values.kagentTools.image.tag }}"
-          imagePullPolicy: {{ .Values.kagentTools.image.pullPolicy | default .Values.imagePullPolicy }}
-          ports:
-            - name: mcp
-              containerPort: 8084
-              protocol: TCP
-          env:
-             - name: LOG_LEVEL
-               value: debug
-             - name: PYTHONUNBUFFERED
-               value: "1"
-          # Run the custom Python MCP server for Kubernetes tools
-          # This implements k8s_get_resources and k8s_get_available_api_resources
-          command: ["python", "/app/k8s_mcp_server.py", "--transport", "sse", "--port", "8084", "--host", "0.0.0.0"]
-        {{- end }}
+

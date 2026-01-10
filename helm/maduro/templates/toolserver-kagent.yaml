@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "maduro.labels" . | nindent 4 }}
 spec:
-  url: "http://{{ include "maduro.fullname" . }}-controller.{{ include "maduro.namespace" . }}:8084/mcp"
+  url: "http://kagent-tools.{{ include "maduro.namespace" . }}:8084/mcp"
   timeout: 30s
   sseReadTimeout: 5m0s
   description: "Official KAgent tool server"

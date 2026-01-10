@@ -1,0 +1,39 @@
+{{- if .Values.kagentTools.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "maduro.fullname" . }}-tools
+  labels:
+    {{- include "maduro.labels" . | nindent 4 }}
+    app.kubernetes.io/component: tools
+spec:
+  replicas: {{ .Values.kagentTools.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "maduro.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: tools
+  template:
+    metadata:
+      labels:
+        {{- include "maduro.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: tools
+    spec:
+      serviceAccountName: {{ include "maduro.serviceAccountName" . }}
+      containers:
+        - name: tools
+          image: "{{- $reg := .Values.kagentTools.image.registry -}}{{- if $reg -}}{{ $reg }}/{{- end -}}{{ .Values.kagentTools.image.repository }}:{{ .Values.kagentTools.image.tag }}"
+          imagePullPolicy: {{ .Values.kagentTools.image.pullPolicy | default .Values.imagePullPolicy }}
+          ports:
+            - name: mcp
+              containerPort: 8084
+              protocol: TCP
+          env:
+             - name: LOG_LEVEL
+               value: debug
+             - name: PYTHONUNBUFFERED
+               value: "1"
+          # Run the custom Python MCP server
+          command: ["python", "/app/k8s_mcp_server.py", "--transport", "sse", "--port", "8084", "--host", "0.0.0.0"]
+          resources:
+            {{- toYaml .Values.kagentTools.resources | nindent 12 }}
+{{- end }}
