@@ -6,7 +6,8 @@ set -e
 # =================================================================================================
 
 # Configuration
-RAND_ID=$(openssl rand -hex 4 2>/dev/null || echo "dev")
+# Use timestamp to guarantee unique registry per deployment, forcing image pulls
+RAND_ID=$(date +%s)
 REGISTRY="ttl.sh/maduro-v2-${RAND_ID}"
 VERSION="0.0.1-24h"
 NAMESPACE="maduro"
