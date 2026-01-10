@@ -36,8 +36,10 @@ RUN pip install uv
 # We copy the entire python directory
 COPY python/ /app/python_src/
 
-# Install FastMCP dependencies explicitly if not in ADK
-RUN pip install "mcp[cli]"
+# Install Python dependencies for the custom MCP server
+# Note: 'mcp[cli]' installs the SDK and CLI, but 'uvicorn' and 'fastapi' are REQUIRED 
+# for running the server in SSE/HTTP mode (which FastMCP uses under the hood).
+RUN pip install "mcp[cli]" uvicorn fastapi
 
 # 4. Install Kagent ADK
 WORKDIR /app/python_src
